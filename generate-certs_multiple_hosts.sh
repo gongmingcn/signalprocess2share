@@ -21,7 +21,9 @@ DNS1=dns_1.y.z
 DNS2=dns_2.y.z
 PUBLIC_IP=0.0.0.0
 
-cat > "./mycert.cnf" << EOF
+EXT_CNF_FILE="./mycert.cnf"
+
+cat > $EXT_CNF_FILE << EOF
 [req]
 distinguished_name = req_distinguished_name
 req_extensions = v3_req
@@ -56,7 +58,7 @@ IP.5 = 172.19.0.1
 
 EOF
 
-# Just change to your belongings
+# Just change to your application
 COMPOSE_PROJECT_DIR="/opt/mosquitto"
 
 # Optional: Remove the older certificates
@@ -65,13 +67,11 @@ rm "$COMPOSE_PROJECT_DIR/certs/server*.*"
 rm "$COMPOSE_PROJECT_DIR/certs/client*.*"
 rm "$COMPOSE_PROJECT_DIR/data/mosquitto/conf/certs/*.*"
 
-EXT_CNF_FILE="./mycert.cnf"
-
 SUBJECT_CA="/C=$COUTRY_CODE/ST=$STATE_NAME/L=$CITY_NAME/O=$ORG_NAME/OU=CA"
 SUBJECT_SERVER="/C=$COUTRY_CODE/ST=$STATE_NAME/L=$CITY_NAME/O=$ORG_NAME/OU=Server"
 SUBJECT_CLIENT="/C=$COUTRY_CODE/ST=$STATE_NAME/L=$CITY_NAME/O=$ORG_NAME/OU=Client"
 
-### Do the stuff
+### Prepare the subroutines to create the CA, server and client certificates
 function generate_CA () {
    echo "$SUBJECT_CA"
    openssl req -x509 -nodes -sha256 \
